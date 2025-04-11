@@ -6,19 +6,16 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+    apiKey: "AIzaSyDYIIWG_toBkmtrJYX8oyyPTCKTK86qmLM",
+    authDomain: "registeragriedge.firebaseapp.com",
+    databaseURL: "https://registeragriedge-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "registeragriedge",
+    storageBucket: "registeragriedge.firebasestorage.app",
+    messagingSenderId: "737540231442",
+    appId: "1:737540231442:web:3a046e24e88424fb3a23cb"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
-
-
-export default {app, db};
+export default app;
