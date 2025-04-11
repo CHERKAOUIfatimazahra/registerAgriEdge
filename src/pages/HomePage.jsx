@@ -158,17 +158,18 @@ export default function RegistrationForm() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" 
           style={{ 
-            backgroundImage: "url('agriedge.png')", 
-            backgroundSize: "cover" 
+            backgroundImage: "url('agriedged.png')", 
+            backgroundSize: "cover",
           }}>
+            <div className="fixed top-0 left-0 h-screen w-full backdrop-blur-sm"></div>
         <div className="w-full max-w-md mx-4 my-6 rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm">
           <div className="bg-gradient-to-br from-gray-900 to-green-900 p-6">
             <div className="flex justify-center mb-8">
-              <div className="w-32 h-32 bg-white bg-opacity-10 rounded-full flex items-center justify-center p-2 ring-2 ring-white ring-opacity-30">
+              <div className="w-32 h-32 bg-white bg-opacity-10 rounded-full flex items-center justify-center ring-2 ring-white ring-opacity-30 overflow-hidden">
                 <img 
                   src="/agriedge.png" 
                   alt="Logo AgriEdge" 
-                  className="w-24 h-24 object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
@@ -221,7 +222,7 @@ export default function RegistrationForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" 
          style={{ 
-           backgroundImage: "url('agriedge.png')", 
+           backgroundImage: "url('agriedged.png')", 
            backgroundSize: "cover" 
          }}>
       <div className="w-full max-w-5xl mx-4 my-6 flex flex-col md:flex-row rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm">
@@ -241,11 +242,11 @@ export default function RegistrationForm() {
           
           <div className="relative z-10">
             <div className="flex justify-center mb-8">
-              <div className="w-40 h-40 bg-white bg-opacity-10 rounded-full flex items-center justify-center p-2 ring-2 ring-white ring-opacity-30">
+              <div className="w-40 h-40 bg-white bg-opacity-10 rounded-full flex items-center justify-center ring-2 ring-white ring-opacity-30 overflow-hidden">
                 <img 
                   src="/agriedge.png" 
                   alt="Logo AgriEdge" 
-                  className="w-32 h-32 object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
