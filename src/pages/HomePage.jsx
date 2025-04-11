@@ -111,7 +111,7 @@ export default function RegistrationForm() {
         phone: formData.phone.trim(),
         country: formData.country.trim(),
         interests: formData.interests || [],
-        team: formData.team,
+        teamMembre: formData.team,
         timestamp: new Date().toISOString()
       };
 
