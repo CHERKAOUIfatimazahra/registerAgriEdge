@@ -121,67 +121,82 @@ export default function RegistrationForm() {
          }}>
       <div className="w-full max-w-5xl mx-4 my-6 flex flex-col md:flex-row rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm">
         {/* Left Side - Logo and Event Info */}
-        <div className="w-full md:w-2/5 bg-gradient-to-br from-gray-800 to-gray-900 p-6 flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <svg width="100%" height="100%" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0,0 L800,0 L400,600 Z" fill={brandColors.green} />
-              <path d="M0,800 L800,800 L600,200 Z" fill={brandColors.green} />
-              <path d="M0,0 L0,800 L300,400 Z" fill={brandColors.green} />
-              <path d="M800,0 L800,800 L500,400 Z" fill={brandColors.green} />
-            </svg>
+        <div className="w-full md:w-2/5 bg-gradient-to-br from-gray-900 to-green-900 p-6 flex flex-col justify-between relative overflow-hidden">
+          <div className="absolute inset-0 opacity-20">
+            <div className="w-full h-full">
+              <svg width="100%" height="100%" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="400" cy="400" r="300" fill={brandColors.green} />
+                <path d="M0,0 L800,0 L400,600 Z" fill="white" opacity="0.1" />
+                <path d="M0,800 L800,800 L600,200 Z" fill="white" opacity="0.1" />
+                <circle cx="200" cy="200" r="150" fill="white" opacity="0.05" />
+                <circle cx="600" cy="600" r="200" fill="white" opacity="0.05" />
+              </svg>
+            </div>
           </div>
           
           <div className="relative z-10">
-            <div className="flex justify-center mb-6">
-              <div className="w-48">
+            <div className="flex justify-center mb-8">
+              <div className="w-40 h-40 bg-white bg-opacity-10 rounded-full flex items-center justify-center p-2 ring-2 ring-white ring-opacity-30">
                 <img 
                   src="/agriedge.png" 
                   alt="Logo AgriEdge" 
-                  className="w-full h-auto"
+                  className="w-32 h-32 object-contain"
                 />
               </div>
             </div>
             
-            <h2 className="text-white text-center text-2xl font-bold mt-4">AgriEdge</h2>
-            <h3 className="text-gray-300 text-center text-lg font-light mb-6">Inscription à l'Événement</h3>
+            <h2 className="text-white text-center text-3xl font-bold mt-4 mb-2">AgriEdge</h2>
+            <div className="w-16 h-1 bg-green-400 mx-auto mb-6"></div>
+            <h3 className="text-green-100 text-center text-xl font-light mb-8">Inscription à l'Événement</h3>
             
-            <div className="bg-gray-800 bg-opacity-50 rounded-lg p-4 mt-4 border border-gray-700 backdrop-blur-sm">
-              <h4 className="text-white text-base font-semibold mb-3">Détails de l'Événement</h4>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="bg-gray-700 bg-opacity-50 rounded-full p-2 mr-3" style={{ color: brandColors.green }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-200 text-sm">15-17 Avril 2025</p>
-                </div>
-                
-                <div className="flex items-center">
-                  <div className="bg-gray-700 bg-opacity-50 rounded-full p-2 mr-3" style={{ color: brandColors.green }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-200 text-sm">Centre d'Exposition de Casablanca</p>
-                </div>
-                
-                <div className="flex items-center">
-                  <div className="bg-gray-700 bg-opacity-50 rounded-full p-2 mr-3" style={{ color: brandColors.green }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-200 text-sm">Découvrez l'avenir de l'AgriTech</p>
-                </div>
-              </div>
+            <div className="bg-black bg-opacity-30 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-10">
+              <p className="text-green-200 text-center font-bold">Découvrir les dernières innovations en agriculture durable</p>
             </div>
           </div>
           
-          <div className="mt-6 text-center relative z-10 border-t border-gray-700 pt-4">
-            <p className="text-gray-400 text-xs mb-1">Des questions ? Contactez-nous :</p>
-            <p className="text-white text-sm font-semibold">info@agriedge.com</p>
+          <div className="mt-8 text-center relative z-10 border-t border-green-600 border-opacity-30 pt-4">
+            <p className="text-green-200 text-sm mb-1">Des questions ? Contactez-nous :</p>
+            <p className="text-white text-lg font-semibold">info@agriedge.com</p>
+            <div className="flex justify-center mt-4 space-x-4">
+              {/* Facebook */}
+              <a
+                href="https://www.facebook.com/AgriEdgebu/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="w-8 h-8 rounded-full bg-white bg-opacity-10 flex items-center justify-center hover:bg-opacity-20 cursor-pointer transition-all">
+                  <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+                  </svg>
+                </div>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/agriedge/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="w-8 h-8 rounded-full bg-white bg-opacity-10 flex items-center justify-center hover:bg-opacity-20 cursor-pointer transition-all">
+                  <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
+                </div>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/company/agriedge/posts/?feedView=all"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="w-8 h-8 rounded-full bg-white bg-opacity-10 flex items-center justify-center hover:bg-opacity-20 cursor-pointer transition-all">
+                  <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
+                  </svg>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
         
