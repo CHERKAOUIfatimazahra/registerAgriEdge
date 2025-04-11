@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import app from '../firebaseConfig';
 import { toast } from 'react-toastify';
 
 export default function RegistrationForm() {
+  const [teamMembreName, setteamMembreName] = useState("");
+  const [teamSelected, setTeamSelected] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -12,10 +14,50 @@ export default function RegistrationForm() {
     phone: "",
     country: "",
     interests: [],
-    otherInterest: ""
+    otherInterest: "",
+    teamMembre: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOtherField, setShowOtherField] = useState(false);
+
+  const availableTeamsMembre = [
+    "fatima zahra cherkaoui",
+    "team membre 1",
+    "team membre 2",
+    "team membre 3",
+    "team membre 4",
+  ];
+
+  useEffect(() => {
+    const savedTeam = localStorage.getItem('agriedgeTeamMember');
+    if (savedTeam) {
+      setteamMembreName(savedTeam);
+      setTeamSelected(true);
+      setFormData(prev => ({ ...prev, team: savedTeam }));
+    }
+  }, []);
+
+  const handleTeamSelection = (e) => {
+    e.preventDefault();
+    if (teamMembreName) {
+      localStorage.setItem('agriedgeTeamMember', teamMembreName);
+      setTeamSelected(true);
+      setFormData(prev => ({ ...prev, team: teamMembreName }));
+    } else {
+      toast.error("Veuillez sélectionner votre nom.");
+    }
+  };
+
+  const handleTeamChange = (e) => {
+    setteamMembreName(e.target.value);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('agriedgeTeamMember');
+    setTeamSelected(false);
+    setteamMembreName("");
+    setFormData(prev => ({ ...prev, team: "" }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +100,7 @@ export default function RegistrationForm() {
       const registrationsRef = collection(db, 'registrations');
       
       if (!formData.fullName || !formData.email || !formData.company || !formData.phone || !formData.country) {
-        throw new Error('Please fill in all required fields');
+        throw new Error('Veuillez remplir tous les champs obligatoires');
       }
 
       const submissionData = {
@@ -69,6 +111,7 @@ export default function RegistrationForm() {
         phone: formData.phone.trim(),
         country: formData.country.trim(),
         interests: formData.interests || [],
+        team: formData.team,
         timestamp: new Date().toISOString()
       };
 
@@ -78,7 +121,7 @@ export default function RegistrationForm() {
       
       const docRef = await addDoc(registrationsRef, submissionData);
 
-      toast.success('Registration successful!');
+      toast.success('Inscription réussie!');
       
       setFormData({
         fullName: "",
@@ -88,18 +131,19 @@ export default function RegistrationForm() {
         phone: "",
         country: "",
         interests: [],
-        otherInterest: ""
+        otherInterest: "",
+        team: formData.team
       });
       setShowOtherField(false);
     } catch (error) {
-      console.error('Error submitting form:', error);
-      console.error('Error details:', {
-        code: error.code,
-        message: error.message,
-        name: error.name,
-        stack: error.stack
-      });
-      toast.error(`Registration failed: ${error.message}`);
+      // console.error('Erreur lors de la soumission du formulaire:', error);
+      // console.error('Détails de l\'erreur:', {
+      //   code: error.code,
+      //   message: error.message,
+      //   name: error.name,
+      //   stack: error.stack
+      // });
+      toast.error(`Échec de l'inscription vérifiez votre connexion internet et réessayez`);
     } finally {
       setIsSubmitting(false);
     }
@@ -109,6 +153,70 @@ export default function RegistrationForm() {
     green: "#bcd630",
     darkGray: "#4d4d4d",
   };
+
+  if (!teamSelected) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" 
+          style={{ 
+            backgroundImage: "url('agriedge.png')", 
+            backgroundSize: "cover" 
+          }}>
+        <div className="w-full max-w-md mx-4 my-6 rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-green-900 p-6">
+            <div className="flex justify-center mb-8">
+              <div className="w-32 h-32 bg-white bg-opacity-10 rounded-full flex items-center justify-center p-2 ring-2 ring-white ring-opacity-30">
+                <img 
+                  src="/agriedge.png" 
+                  alt="Logo AgriEdge" 
+                  className="w-24 h-24 object-contain"
+                />
+              </div>
+            </div>
+            
+            <h2 className="text-white text-center text-2xl font-bold mb-2">AgriEdge</h2>
+            <div className="w-16 h-1 bg-green-400 mx-auto mb-6"></div>
+          </div>
+          
+          <div className="bg-white bg-opacity-90 p-6">
+            <form onSubmit={handleTeamSelection} className="space-y-4">
+              <div>
+                <label htmlFor="teamMembreName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Sélectionnez votre nom:
+                </label>
+                <select
+                  id="teamMembreName"
+                  name="teamMembreName"
+                  value={teamMembreName}
+                  onChange={handleTeamChange}
+                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
+                  required
+                >
+                  <option value="">-- Choisir votre nom --</option>
+                  {availableTeamsMembre.map((team, index) => (
+                    <option key={index} value={team}>{team}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <button
+                  type="submit"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-gray-900 transition duration-200"
+                  style={{ backgroundColor: brandColors.green }}
+                >
+                  Continuer
+                </button>
+              </div>
+              
+              <p className="mt-3 text-center text-xs text-gray-600">
+                © 2025 AgriEdge SA.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" 
@@ -152,8 +260,14 @@ export default function RegistrationForm() {
           </div>
           
           <div className="mt-8 text-center relative z-10 border-t border-green-600 border-opacity-30 pt-4">
-            <p className="text-green-200 text-sm mb-1">utilisateur connecter :</p>
-            <p className="text-white text-lg font-semibold">user name</p>
+            <p className="text-green-200 text-sm mb-1">Membre connectée :</p>
+            <p className="text-white text-lg font-semibold">{teamMembreName}</p>
+            <button 
+              onClick={handleLogout}
+              className="mt-2 text-sm text-red-300 hover:text-red-200 transition"
+            >
+              Se déconnecter
+            </button>
           </div>
         </div>
         
