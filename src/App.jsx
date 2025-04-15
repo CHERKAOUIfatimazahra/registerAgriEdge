@@ -6,22 +6,33 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
-// Pages publiques
 import HomePage from "./pages/HomePage";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Routes publiques */}
-        <Route path="/" element={<HomePage />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
 
-        {/* Route par défaut - redirection vers la page d'accueil */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <ToastContainer position="top-right" autoClose={5000} />
-    </Router>
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute>
+                <AdminPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+        <ToastContainer position="top-right" autoClose={5000} />
+      </Router>
+    </AuthProvider>
   );
 }
 
