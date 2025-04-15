@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import app from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 import { toast } from 'react-toastify';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function RegistrationForm() {
-  const [teamMembreName, setteamMembreName] = useState("");
-  const [teamSelected, setTeamSelected] = useState(false);
+  const { currentUser, login, register, logout } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -15,53 +15,67 @@ export default function RegistrationForm() {
     country: "",
     interests: [],
     otherInterest: "",
-    teamMembre: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOtherField, setShowOtherField] = useState(false);
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: ""
+  });
+  const [registerData, setRegisterData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [showRegister, setShowRegister] = useState(false);
 
-  const availableTeamsMembre = [
-    "fatima zahra cherkaoui",
-    "team membre 1",
-    "team membre 2",
-    "team membre 3",
-    "team membre 4",
-  ];
-
-  useEffect(() => {
-    const savedTeam = localStorage.getItem('agriedgeTeamMember');
-    if (savedTeam) {
-      setteamMembreName(savedTeam);
-      setTeamSelected(true);
-      setFormData(prev => ({ ...prev, team: savedTeam }));
-    }
-  }, []);
-
-  const handleTeamSelection = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (teamMembreName) {
-      localStorage.setItem('agriedgeTeamMember', teamMembreName);
-      setTeamSelected(true);
-      setFormData(prev => ({ ...prev, team: teamMembreName }));
-    } else {
-      toast.error("Veuillez sélectionner votre nom.");
+    try {
+      await login(loginData.email, loginData.password);
+      toast.success('Connexion réussie!');
+    } catch (error) {
+      toast.error('Email ou mot de passe incorrect');
     }
   };
 
-  const handleTeamChange = (e) => {
-    setteamMembreName(e.target.value);
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (registerData.password !== registerData.confirmPassword) {
+      toast.error('Les mots de passe ne correspondent pas');
+      return;
+    }
+    try {
+      await register(registerData.email, registerData.password);
+      toast.success('Inscription réussie!');
+      setShowRegister(false);
+    } catch (error) {
+      toast.error('Erreur lors de l\'inscription: ' + error.message);
+    }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('agriedgeTeamMember');
-    setTeamSelected(false);
-    setteamMembreName("");
-    setFormData(prev => ({ ...prev, team: "" }));
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Déconnexion réussie!');
+    } catch (error) {
+      toast.error('Erreur lors de la déconnexion');
+    }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    setLoginData({ ...loginData, [name]: value });
+  };
+
+  const handleRegisterChange = (e) => {
+    const { name, value } = e.target;
+    setRegisterData({ ...registerData, [name]: value });
   };
 
   const handleCheckboxChange = (e) => {
@@ -96,7 +110,6 @@ export default function RegistrationForm() {
     setIsSubmitting(true);
     
     try {
-      const db = getFirestore(app);
       const registrationsRef = collection(db, 'registrations');
       
       if (!formData.fullName || !formData.email || !formData.company || !formData.phone || !formData.country) {
@@ -111,7 +124,7 @@ export default function RegistrationForm() {
         phone: formData.phone.trim(),
         country: formData.country.trim(),
         interests: formData.interests || [],
-        teamMembre: formData.team,
+        userId: currentUser.uid,
         timestamp: new Date().toISOString()
       };
 
@@ -119,7 +132,7 @@ export default function RegistrationForm() {
         submissionData.otherInterest = formData.otherInterest.trim();
       }
       
-      const docRef = await addDoc(registrationsRef, submissionData);
+      await addDoc(registrationsRef, submissionData);
 
       toast.success('Inscription réussie!');
       
@@ -132,17 +145,9 @@ export default function RegistrationForm() {
         country: "",
         interests: [],
         otherInterest: "",
-        team: formData.team
       });
       setShowOtherField(false);
     } catch (error) {
-      // console.error('Erreur lors de la soumission du formulaire:', error);
-      // console.error('Détails de l\'erreur:', {
-      //   code: error.code,
-      //   message: error.message,
-      //   name: error.name,
-      //   stack: error.stack
-      // });
       toast.error(`Échec de l'inscription vérifiez votre connexion internet et réessayez`);
     } finally {
       setIsSubmitting(false);
@@ -154,7 +159,7 @@ export default function RegistrationForm() {
     darkGray: "#4d4d4d",
   };
 
-  if (!teamSelected) {
+  if (!currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" 
           style={{ 
@@ -179,40 +184,135 @@ export default function RegistrationForm() {
           </div>
           
           <div className="bg-white bg-opacity-90 p-6">
-            <form onSubmit={handleTeamSelection} className="space-y-4">
-              <div>
-                <label htmlFor="teamMembreName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Sélectionnez votre nom:
-                </label>
-                <select
-                  id="teamMembreName"
-                  name="teamMembreName"
-                  value={teamMembreName}
-                  onChange={handleTeamChange}
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
-                  required
-                >
-                  <option value="">-- Choisir votre nom --</option>
-                  {availableTeamsMembre.map((team, index) => (
-                    <option key={index} value={team}>{team}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div>
-                <button
-                  type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-gray-900 transition duration-200"
-                  style={{ backgroundColor: brandColors.green }}
-                >
-                  Continuer
-                </button>
-              </div>
-              
-              <p className="mt-3 text-center text-xs text-gray-600">
-                © 2025 AgriEdge SA.
-              </p>
-            </form>
+            {!showRegister ? (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email:
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={loginData.email}
+                    onChange={handleLoginChange}
+                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
+                    required
+                    placeholder="Entrez votre email"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                    Mot de passe:
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={loginData.password}
+                    onChange={handleLoginChange}
+                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
+                    required
+                    placeholder="Entrez votre mot de passe"
+                  />
+                </div>
+                
+                <div>
+                  <button
+                    type="submit"
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-gray-900 transition duration-200"
+                    style={{ backgroundColor: brandColors.green }}
+                  >
+                    Se connecter
+                  </button>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowRegister(true)}
+                    className="text-sm text-gray-600 hover:text-gray-800"
+                  >
+                    Créer un compte
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div>
+                  <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email:
+                  </label>
+                  <input
+                    type="email"
+                    id="register-email"
+                    name="email"
+                    value={registerData.email}
+                    onChange={handleRegisterChange}
+                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
+                    required
+                    placeholder="Entrez votre email"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-2">
+                    Mot de passe:
+                  </label>
+                  <input
+                    type="password"
+                    id="register-password"
+                    name="password"
+                    value={registerData.password}
+                    onChange={handleRegisterChange}
+                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
+                    required
+                    placeholder="Entrez votre mot de passe"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirmer le mot de passe:
+                  </label>
+                  <input
+                    type="password"
+                    id="confirm-password"
+                    name="confirmPassword"
+                    value={registerData.confirmPassword}
+                    onChange={handleRegisterChange}
+                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
+                    required
+                    placeholder="Confirmez votre mot de passe"
+                  />
+                </div>
+                
+                <div>
+                  <button
+                    type="submit"
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-gray-900 transition duration-200"
+                    style={{ backgroundColor: brandColors.green }}
+                  >
+                    S'inscrire
+                  </button>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowRegister(false)}
+                    className="text-sm text-gray-600 hover:text-gray-800"
+                  >
+                    Retour à la connexion
+                  </button>
+                </div>
+              </form>
+            )}
+            
+            <p className="mt-3 text-center text-xs text-gray-600">
+              © 2025 AgriEdge SA.
+            </p>
           </div>
         </div>
       </div>
@@ -261,8 +361,8 @@ export default function RegistrationForm() {
           </div>
           
           <div className="mt-8 text-center relative z-10 border-t border-green-600 border-opacity-30 pt-4">
-            <p className="text-green-200 text-sm mb-1">Membre connectée :</p>
-            <p className="text-white text-lg font-semibold">{teamMembreName}</p>
+            <p className="text-green-200 text-sm mb-1">Utilisateur connecté :</p>
+            <p className="text-white text-lg font-semibold">{currentUser.email}</p>
             <button 
               onClick={handleLogout}
               className="mt-2 text-sm text-red-300 hover:text-red-200 transition"
