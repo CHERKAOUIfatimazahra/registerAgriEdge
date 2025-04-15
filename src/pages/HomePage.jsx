@@ -154,6 +154,10 @@ export default function RegistrationForm() {
     }
   };
 
+  const navigateToAdmin = () => {
+    window.location.href = '/admin';
+  };
+
   const brandColors = {
     green: "#bcd630",
     darkGray: "#4d4d4d",
@@ -363,12 +367,20 @@ export default function RegistrationForm() {
           <div className="mt-8 text-center relative z-10 border-t border-green-600 border-opacity-30 pt-4">
             <p className="text-green-200 text-sm mb-1">Utilisateur connecté :</p>
             <p className="text-white text-lg font-semibold">{currentUser.email}</p>
-            <button 
-              onClick={handleLogout}
-              className="mt-2 text-sm text-red-300 hover:text-red-200 transition"
-            >
-              Se déconnecter
-            </button>
+            <div className="flex flex-col space-y-2 mt-2">
+              <button 
+                onClick={handleLogout}
+                className="text-sm text-red-300 hover:text-red-200 transition"
+              >
+                Se déconnecter
+              </button>
+              <button 
+                onClick={navigateToAdmin}
+                className="text-sm bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded-md transition"
+              >
+                Accéder au Dashboard Admin
+              </button>
+            </div>
           </div>
         </div>
         
