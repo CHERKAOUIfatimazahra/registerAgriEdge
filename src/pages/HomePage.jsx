@@ -124,7 +124,7 @@ export default function RegistrationForm() {
         phone: formData.phone.trim(),
         country: formData.country.trim(),
         interests: formData.interests || [],
-        userId: currentUser.uid,
+        creatorEmail: currentUser.email,
         timestamp: new Date().toISOString()
       };
 

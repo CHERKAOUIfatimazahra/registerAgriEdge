@@ -13,7 +13,6 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'timestamp', direction: 'desc' });
-  const [userName, setUserName] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
@@ -24,21 +23,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchRegistrations();
-    fetchUserName();
   }, []);
-
-  const fetchUserName = async () => {
-    try {
-      const userDoc = await getDocs(collection(db, 'users'));
-      userDoc.forEach(doc => {
-        if (doc.data().email === currentUser.email) {
-          setUserName(doc.data().fullName);
-        }
-      });
-    } catch (error) {
-      console.error('Error fetching user name:', error);
-    }
-  };
 
   const fetchRegistrations = async () => {
     try {
@@ -80,7 +65,7 @@ export default function AdminPage() {
       'Solutions d\'intérêt': reg.interests.join(', '),
       'Autre intérêt': reg.otherInterest || '',
       'Date d\'inscription': new Date(reg.timestamp).toLocaleString(),
-      'Inscrit par': reg.teamMembre || 'N/A'
+      'Inscrit par': reg.creatorEmail || 'N/A'
     }));
   };
 
@@ -110,7 +95,7 @@ export default function AdminPage() {
       reg.country,
       [...reg.interests, reg.otherInterest].filter(Boolean).join(', '),
       new Date(reg.timestamp).toLocaleString(),
-      reg.teamMembre || 'N/A'
+      reg.creatorEmail || 'N/A'
     ]);
     
     autoTable(doc, {
@@ -210,7 +195,7 @@ export default function AdminPage() {
          }}>
       <div className="fixed top-0 left-0 h-screen w-full backdrop-blur-sm"></div>
       
-      <div className="relative z-10 w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex-grow">
+      <div className="relative z-10 w-full mx-auto py-6 px-4 sm:px-6 lg:px-8 flex-grow">
         <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between bg-gradient-to-br from-gray-900 to-green-900 rounded-xl shadow-lg p-6 text-white">
           <div className="flex items-center mb-4 md:mb-0">
             <div className="w-16 h-16 bg-white bg-opacity-10 rounded-full flex items-center justify-center mr-4 ring-2 ring-white ring-opacity-30 overflow-hidden">
@@ -228,7 +213,7 @@ export default function AdminPage() {
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="bg-black bg-opacity-30 px-4 py-2 rounded-lg backdrop-blur-sm border border-white border-opacity-10">
-              <span className="text-green-100">Connecté en tant que: {userName || currentUser.email}</span>
+              <span className="text-green-100">Connecté en tant que: {currentUser.email}</span>
             </div>
             <button
               onClick={handleLogout}
@@ -286,11 +271,11 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="w-full overflow-x-auto" style={{ minWidth: "100%" }}>
+            <table className="min-w-full divide-y divide-gray-200 table-fixed">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('fullName')}>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-1/8" onClick={() => handleSort('fullName')}>
                     <div className="flex items-center">
                       Nom Complet
                       {sortConfig.key === 'fullName' && (
@@ -300,7 +285,7 @@ export default function AdminPage() {
                       )}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('email')}>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-1/6" onClick={() => handleSort('email')}>
                     <div className="flex items-center">
                       Email
                       {sortConfig.key === 'email' && (
@@ -310,7 +295,7 @@ export default function AdminPage() {
                       )}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('company')}>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-1/8" onClick={() => handleSort('company')}>
                     <div className="flex items-center">
                       Entreprise
                       {sortConfig.key === 'company' && (
@@ -320,7 +305,7 @@ export default function AdminPage() {
                       )}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('country')}>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-1/12" onClick={() => handleSort('country')}>
                     <div className="flex items-center">
                       Pays
                       {sortConfig.key === 'country' && (
@@ -330,10 +315,10 @@ export default function AdminPage() {
                       )}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                     Solutions d'intérêt
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('timestamp')}>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-1/8" onClick={() => handleSort('timestamp')}>
                     <div className="flex items-center">
                       Date d'inscription
                       {sortConfig.key === 'timestamp' && (
@@ -343,7 +328,7 @@ export default function AdminPage() {
                       )}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-1/8">
                     Inscrit par
                   </th>
                 </tr>
@@ -352,20 +337,20 @@ export default function AdminPage() {
                 {getCurrentItems().length > 0 ? (
                   getCurrentItems().map((registration) => (
                     <tr key={registration.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 truncate max-w-xs">
                         {registration.fullName}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 truncate max-w-xs">
                         {registration.email}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 truncate max-w-xs">
                         {registration.company}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 truncate">
                         {registration.country}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        <div className="flex flex-wrap gap-1">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <div className="flex flex-wrap gap-1 max-w-xs">
                           {registration.interests && registration.interests.map((interest, index) => (
                             <span key={index} className="px-2 py-1 text-xs rounded-full" 
                                   style={{ backgroundColor: 'rgba(188, 214, 48, 0.2)', color: brandColors.darkGray }}>
@@ -379,11 +364,11 @@ export default function AdminPage() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
                         {new Date(registration.timestamp).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {registration.teamMembre || 'N/A'}
+                      <td className="px-4 py-3 text-sm text-gray-900 truncate">
+                        {registration.creatorEmail || 'N/A'}
                       </td>
                     </tr>
                   ))
