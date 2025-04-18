@@ -11,12 +11,15 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/AdminPage";
+import AuthPage from './pages/AuthPage';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <ToastContainer position="top-right" />
         <Routes>
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<HomePage />} />
 
           <Route 
@@ -30,7 +33,6 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        <ToastContainer position="top-right" autoClose={5000} />
       </Router>
     </AuthProvider>
   );
